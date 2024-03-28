@@ -4,23 +4,40 @@ import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { PROJECT_STATUS_CLASS_MAP, PROJECT_STATUS_TEXT_MAP } from "@/constants";
 import { Head, Link, router } from "@inertiajs/react";
+import { ChevronDownIcon,ChevronUpIcon } from '@heroicons/react/16/solid'
+import TableHeading from "@/Components/TableHeading";
+
 
 export default function Index({ auth, projects, queryParams = null }) {
-  queryParams = queryParams || {}
+  queryParams = queryParams || {};
   const searchFieldChanged = (name, value) => {
     if (value) {
-      queryParams[name] = value
+      queryParams[name] = value;
     } else {
-      delete queryParams[name]
+      delete queryParams[name];
     }
 
     router.get(route("project.index"), queryParams);
-  }
+  };
 
   const onKeyPress = (name, e) => {
     if (e.key !== "Enter") return;
 
     searchFieldChanged(name, e.target.value);
+  };
+
+  const sortChanged = (name) => {
+    if (name === queryParams.sort_field) {
+      if (queryParams.sort_direction === "asc") {
+        queryParams.sort_direction = "desc";
+      } else {
+        queryParams.sort_direction = "asc";
+      }
+    }else{
+      queryParams.sort_field = name;
+      queryParams.sort_direction = 'asc';
+    }
+    router.get(route("project.index"), queryParams);
   };
 
   return (
@@ -39,15 +56,41 @@ export default function Index({ auth, projects, queryParams = null }) {
           <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
             <div className="p-6 text-gray-900 dark:text-gray-100">
               {/* <pre>{JSON.stringify(projects,undefined,2)}</pre> */}
-              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <div className="overflow-auto">
+            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500">
                   <tr className="text-nowrap">
-                    <th className="px-3 py-2">ID</th>
+                    <TableHeading
+                    name = 'id'
+                    sort_field={queryParams.sort_field}
+                    sort_direction={queryParams.sort_direction}
+                    sortChanged={sortChanged}
+                    >ID</TableHeading>
                     <th className="px-3 py-2">Image</th>
-                    <th className="px-3 py-2">Name</th>
-                    <th className="px-3 py-2">Status</th>
-                    <th className="px-3 py-2 ">Create Date</th>
-                    <th className="px-3 py-2 ">Due Date</th>
+                    <TableHeading
+                    name = 'name'
+                    sort_field={queryParams.sort_field}
+                    sort_direction={queryParams.sort_direction}
+                    sortChanged={sortChanged}
+                    >Name</TableHeading>
+                      <TableHeading
+                    name = 'status'
+                    sort_field={queryParams.sort_field}
+                    sort_direction={queryParams.sort_direction}
+                    sortChanged={sortChanged}
+                    >Status</TableHeading>
+                    <TableHeading
+                    name = 'created_at'
+                    sort_field={queryParams.sort_field}
+                    sort_direction={queryParams.sort_direction}
+                    sortChanged={sortChanged}
+                    >Created Date</TableHeading>
+                    <TableHeading
+                    name = 'due_date'
+                    sort_field={queryParams.sort_field}
+                    sort_direction={queryParams.sort_direction}
+                    sortChanged={sortChanged}
+                    >Due Date</TableHeading>
                     <th className="px-3 py-2">Created By</th>
                     <th className="px-3 py-2 text-right">Actions</th>
                   </tr>
@@ -71,14 +114,14 @@ export default function Index({ auth, projects, queryParams = null }) {
                       <SelectInput
                         className="w-full"
                         defaultValue={queryParams.status}
-
-                        onChange={(e) => searchFieldChanged("status", e.target.value)}
+                        onChange={(e) =>
+                          searchFieldChanged("status", e.target.value)
+                        }
                       >
                         <option value="">Select status</option>
                         <option value="pending">Pending</option>
                         <option value="in_progress">In Progress</option>
                         <option value="completed">Completed</option>
-
                       </SelectInput>
                     </th>
                     <th className="px-3 py-2 "></th>
@@ -139,6 +182,7 @@ export default function Index({ auth, projects, queryParams = null }) {
                   ))}
                 </tbody>
               </table>
+            </div>
               <Pagination links={projects.meta.links} />
             </div>
           </div>
