@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\TaskResource;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -17,25 +18,25 @@ class ProjectController extends Controller
     {
         $query = Project::query();
 
-        $sortFields = request('sort_field','created_at');
-        $sortDirection = request('sort_direction','desc');
+        $sortFields = request('sort_field', 'created_at');
+        $sortDirection = request('sort_direction', 'desc');
 
         if (request("name")) {
-            $query->where("name","like","%".request("name")."%");
+            $query->where("name", "like", "%" . request("name") . "%");
         }
         if (request("status")) {
-            $query->where("status","like","%".request("status")."%");
+            $query->where("status", "like", "%" . request("status") . "%");
         }
 
 
-        $projects = $query->orderBy($sortFields,$sortDirection)
-        ->paginate(10)
-        ->onEachSide(1);
+        $projects = $query->orderBy($sortFields, $sortDirection)
+            ->paginate(10)
+            ->onEachSide(1);
 
-       return inertia('Project/Index',[
-        'projects' => ProjectResource::collection($projects),
-        'queryParams' => request()->query() ?: null,
-       ]);
+        return inertia('Project/Index', [
+            'projects' => ProjectResource::collection($projects),
+            'queryParams' => request()->query() ?: null,
+        ]);
     }
 
     /**
@@ -59,7 +60,26 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        $query =  $project->tasks();
+        $sortFields = request('sort_field','created_at');
+        $sortDirection = request('sort_direction','desc');
+
+        if (request("name")) {
+            $query->where("name","like","%".request("name")."%");
+        }
+        if (request("status")) {
+            $query->where("status","like","%".request("status")."%");
+        }
+
+
+        $tasks = $query->orderBy($sortFields,$sortDirection)
+        ->paginate(10)
+        ->onEachSide(1);
+        return inertia('Project/Show', [
+            'project' => new ProjectResource($project),
+            'tasks' => TaskResource::collection($tasks),
+            'queryParams' => request()->query() ?: null,
+        ]);
     }
 
     /**
