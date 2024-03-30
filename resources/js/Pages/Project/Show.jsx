@@ -3,7 +3,7 @@ import { TASK_STATUS_TEXT_MAP, TASK_STATUS_CLASS_MAP } from "@/constants";
 import { Head } from "@inertiajs/react";
 import TaskTable from "../Task/TasksTables";
 
-export default function show({ auth, project,tasks,queryParams }) {
+export default function show({ auth, project, tasks, queryParams }) {
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -17,15 +17,14 @@ export default function show({ auth, project,tasks,queryParams }) {
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-          <div>
-                <img
-                  src={project.image_path}
-                  alt="Logo"
-                  className="w-full h-64 object-cover"
-                />
-              </div>
+            <div>
+              <img
+                src={project.image_path}
+                alt="Logo"
+                className="w-full h-64 object-cover"
+              />
+            </div>
             <div className="p-6 text-gray-900 dark:text-gray-100">
-
               <div className="grid gap-1 grid-cols-2 mt-2">
                 <div>
                   <div>
@@ -71,7 +70,10 @@ export default function show({ auth, project,tasks,queryParams }) {
                 </div>
               </div>
               <div className="mt-4">
-                <label className="font-bold text-lg"> Project Description</label>
+                <label className="font-bold text-lg">
+                  {" "}
+                  Project Description
+                </label>
                 <p className="mt-1">{project.description}</p>
               </div>
             </div>
@@ -82,11 +84,12 @@ export default function show({ auth, project,tasks,queryParams }) {
       <div className="pb-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-
             <div className="p-6 text-gray-900 dark:text-gray-100">
-            <TaskTable tasks={tasks} queryParams={queryParams} hideProjectColumn = {true}>
-
-              </TaskTable>
+              <TaskTable
+                tasks={tasks}
+                queryParams={queryParams}
+                hideProjectColumn={true}
+              ></TaskTable>
             </div>
           </div>
         </div>
