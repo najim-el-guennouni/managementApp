@@ -7,7 +7,7 @@ import { Head, Link, router } from "@inertiajs/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/16/solid";
 import TableHeading from "@/Components/TableHeading";
 
-export default function Index({ auth, projects, queryParams = null ,success}) {
+export default function Index({ auth, projects, queryParams = null, success }) {
   queryParams = queryParams || {};
   const searchFieldChanged = (name, value) => {
     if (value) {
@@ -38,6 +38,13 @@ export default function Index({ auth, projects, queryParams = null ,success}) {
     }
     router.get(route("project.index"), queryParams);
   };
+  const deleteProject = (project) => {
+    if (!window.confirm("Are you sure you want to delete the proejct ?")) {
+      return;
+    } else {
+      router.delete(route('project.destroy',project.id))
+    }
+  };
 
   return (
     <AuthenticatedLayout
@@ -47,7 +54,10 @@ export default function Index({ auth, projects, queryParams = null ,success}) {
           <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             Projects
           </h2>
-          <Link href={route('project.create')} className="bg-emerald-500 py-1 px-3 text-white rounded shadow transition-all hover:bg-emerald-600">
+          <Link
+            href={route("project.create")}
+            className="bg-emerald-500 py-1 px-3 text-white rounded shadow transition-all hover:bg-emerald-600"
+          >
             Add New
           </Link>
         </div>
@@ -55,10 +65,9 @@ export default function Index({ auth, projects, queryParams = null ,success}) {
     >
       <Head title="Projects" />
 
-
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        {success && (
+          {success && (
             <div className="bg-emerald-500 py-2 px-4 text-white rounded mb-4">
               {success}
             </div>
@@ -186,7 +195,7 @@ export default function Index({ auth, projects, queryParams = null ,success}) {
                           {project.due_date}
                         </td>
                         <td className="px-3 py-3">{project.createdBy.name}</td>
-                        <td className="px-3 py-3">
+                        <td className="px-3 py-2 text-nowrap">
                           <Link
                             href={route("project.edit", project.id)}
                             className="font-medium text-blue-600 dark:text-blue-500 hover-underline mz-1"
@@ -194,13 +203,13 @@ export default function Index({ auth, projects, queryParams = null ,success}) {
                             {" "}
                             Edit{" "}
                           </Link>
-                          <Link
-                            href={route("project.destroy", project.id)}
+                          <button
+                            onClick={ e => deleteProject(project)}
                             className="font-medium text-red-600 dark:text-red-500 hover-underline mz-1"
                           >
                             {" "}
                             Delete{" "}
-                          </Link>
+                          </button>
                         </td>
                       </tr>
                     ))}
